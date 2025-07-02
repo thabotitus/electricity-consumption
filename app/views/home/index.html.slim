@@ -1,0 +1,17 @@
+= render partial: "shared/page_title", locals: { text: t('titles.home.text'), pagy: @pagy, icon: "ri-#{t('titles.home.icon')}-line", subtitle: nil  }
+
+.justify-content-end.d-start.mt-4
+  = link_to 'TOP UP', new_top_up_path, class: 'btn btn-outline-primary rounded-5 px-5 me-4'
+  = link_to 'ADD READING', new_reading_path, class: 'btn btn-outline-primary rounded-5 px-5'
+
+table.table.mt-4
+  thead
+    tr
+      th scope="col" width="50px" = 'Date'
+      th scope="col" width="50px" = 'Reading'
+
+  tbody
+    - @records.each do |reading|
+      tr
+        th scope="row" = reading.created_at.strftime('%e %b %Y %H:%M%p')
+        th scope="row" = reading.current_reading

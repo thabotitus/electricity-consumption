@@ -1,0 +1,20 @@
+= render( \
+  partial: "shared/page_title", \
+  locals: { \
+    text: t('titles.top_ups.text'), \
+    pagy: @pagy, \
+    icon: "ri-#{t('titles.top_ups.icon')}-line", \
+    subtitle: t('titles.top_ups.subtitle')})
+
+.row.justify-content-center.mt-4
+  .card.w-50.pt-3.pb-3
+    .card-body
+      = form_with(url: top_ups_path, model: @top_up) do |f|
+        .mb-3
+          = f.text_field :amount, placeholder: 'Amount', class: 'form-control rounded-5'
+        .mb-3
+          = f.text_field :units, placeholder: 'Units', class: 'form-control rounded-5'
+        .mb-3
+          = f.date_field :date, placeholder: 'Date', class: 'form-control rounded-5'
+
+        = f.submit 'Add', class: 'btn btn-outline-primary rounded-5 px-5 me-4'

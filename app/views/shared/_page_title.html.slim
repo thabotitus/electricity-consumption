@@ -1,0 +1,11 @@
+
+h1.text-start.mb-0
+  = text.upcase
+  i[class="ms-2 #{icon}"]
+
+- if pagy&.present?
+  .mb-4.text-start == pagy_info(pagy)
+- elsif subtitle
+  .mb-4.text-start = subtitle
+
+hr.border.border-1.opacity-50

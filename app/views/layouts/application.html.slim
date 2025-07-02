@@ -1,0 +1,23 @@
+doctype html
+
+html
+  head
+    title = content_for(:title) || "[^•^] Electricity Consumption"
+    meta name="viewport" content="width=device-width,initial-scale=1"
+    meta name="apple-mobile-web-app-capable" content="yes"
+    meta name="mobile-web-app-capable" content="yes"
+    = csrf_meta_tags
+    = csp_meta_tag
+
+    = yield :head
+
+    = stylesheet_link_tag :app, "data-turbo-track": "reload"
+    = javascript_importmap_tags
+
+  body data-bs-theme="dark"
+    .container.py-3
+      .d-flex.justify-content-center style="font-size: 3em;"
+        = link_to root_path, class: 'text-decoration-none' do
+          i.ri-lightbulb-flash-line
+    .container
+      = yield

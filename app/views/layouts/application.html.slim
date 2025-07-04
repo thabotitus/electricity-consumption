@@ -15,9 +15,17 @@ html
     = javascript_importmap_tags
 
   body data-bs-theme="dark"
-    .container.py-3
-      .d-flex.justify-content-center style="font-size: 3em;"
-        = link_to root_path, class: 'text-decoration-none' do
+
+
+    nav.navbar.navbar-expand-lg.bg-body-tertiary
+      .container-fluid
+        = link_to root_path, class: 'navbar-brand' do
           i.ri-lightbulb-flash-line
-    .container
+
+        .collapse.navbar-collapse id="navbarNavAltMarkup"
+          .navbar-nav
+            = link_to 'Top Up', new_top_up_path, class: 'nav-link'
+            = link_to 'Readings', new_reading_path, class: 'nav-link'
+
+    .container.mt-4
       = yield

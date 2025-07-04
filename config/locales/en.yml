@@ -15,17 +15,17 @@ en:
     readings:
       text: New Reading
       subtitle: Track meter readings
-      icon: drinks-2
+      icon: speed-up
 
   table_headings:
-    in: IN
-    out: OUT
-    balance: BALANCE
-    tx_count: TXNs
     date: DATE
-    total: TOTAL
-    details: DETAILS
-    remainder: REMAINDER
+    reading: READING
+    decrease: DECREASED BY
+
+  fields:
+    amount: AMOUNT
+    units: UNITS
+    reading: READING
 
   headings:
     summary: SUMMARY

@@ -1,17 +1,25 @@
-= render partial: "shared/page_title", locals: { text: t('titles.home.text'), pagy: @pagy, icon: "ri-#{t('titles.home.icon')}-line", subtitle: nil  }
+= render( \
+  partial: "shared/page_title", \
+  locals: { \
+    text: t('titles.home.text'), \
+    pagy: @pagy, \
+    icon: "ri-#{t('titles.home.icon')}-line", \
+    subtitle: nil })
 
-.justify-content-end.d-start.mt-4
-  = link_to 'TOP UP', new_top_up_path, class: 'btn btn-outline-primary rounded-5 px-5 me-4'
-  = link_to 'ADD READING', new_reading_path, class: 'btn btn-outline-primary rounded-5 px-5'
+.row
+  .col-lg-4
+    table.table.mt-4.table-bordered
+      thead
+        tr
+          th scope="col" width="50px" = t('table_headings.date')
+          th.text-end scope="col" width="50px" = t('table_headings.reading')
+          th.text-end scope="col" width="50px" = t('table_headings.decrease')
 
-table.table.mt-4
-  thead
-    tr
-      th scope="col" width="50px" = 'Date'
-      th scope="col" width="50px" = 'Reading'
-
-  tbody
-    - @records.each do |reading|
-      tr
-        th scope="row" = reading.created_at.strftime('%e %b %Y %H:%M%p')
-        th scope="row" = reading.current_reading
+      tbody
+        - @records.each do |reading|
+          tr
+            th scope="row" = l(reading.created_at.localtime, format: :short)
+            th.text-end scope="row" = reading.current_reading.round(2)
+            th.text-end scope="row" = calculate_difference(@records, reading)
+  .col-lg-8
+    = render(ChartComponent.new(Reading.all, TopUp.all))

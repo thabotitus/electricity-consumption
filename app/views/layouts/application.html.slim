@@ -18,14 +18,14 @@ html
 
 
     nav.navbar.navbar-expand-lg.bg-body-tertiary
-      .container-fluid
-        = link_to root_path, class: 'navbar-brand' do
+      .container
+        = link_to root_path, class: 'navbar-brand text-warning', style: 'font-size: 2em;' do
           i.ri-lightbulb-flash-line
 
         .collapse.navbar-collapse id="navbarNavAltMarkup"
           .navbar-nav
-            = link_to 'Top Up', new_top_up_path, class: 'nav-link'
-            = link_to 'Readings', new_reading_path, class: 'nav-link'
+            = link_to 'TOP UP', new_top_up_path, class: 'nav-link'
+            = link_to 'NEW READING', new_reading_path, class: 'nav-link'
 
     .container.mt-4
       = yield

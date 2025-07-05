@@ -23,21 +23,28 @@ module ApplicationHelper
     result
   end
 
-  # Estimates the date when the reading will reach zero based on the rate of consumption.
-  # Returns '-' if not enough data or if the rate is non-positive.
+  # Estimates the date when the reading will reach zero based on the average daily spend for the current month.
+  # Uses the first reading of the month and the most recent reading to calculate the average.
+  # Returns '-' if not enough data or if the average spend is non-positive.
   #
-  # @param readings [Array] The collection of readings
+  # @param readings [Array] The collection of readings (ordered by created_at ascending)
   # @return [Date, String] The estimated zero date or '-'
   def calculate_day_zero(readings)
     return '-' if readings.empty? || readings.size < 2
 
     latest = readings.last
-    previous = readings[-2]
-    rate = previous.current_reading - latest.current_reading
+    # Find the first reading of the current month
+    first_of_month = readings.find { |r| r.created_at.month == latest.created_at.month && r.created_at.year == latest.created_at.year }
+    return '-' unless first_of_month && first_of_month != latest
 
-    return '-' if rate <= 0
+    days = (latest.created_at.to_date - first_of_month.created_at.to_date).to_i
+    return '-' if days <= 0
 
-    days_to_zero = (latest.current_reading / rate).ceil
+    spend = first_of_month.current_reading - latest.current_reading
+    avg_daily_spend = spend / days.to_f
+    return '-' if avg_daily_spend <= 0
+
+    days_to_zero = (latest.current_reading / avg_daily_spend).ceil
     (latest.created_at + days_to_zero.days).to_date
   end
 end

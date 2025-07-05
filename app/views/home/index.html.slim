@@ -7,6 +7,10 @@
     subtitle: nil })
 
 .row
+  .col-sm-12.col-lg-4
+    .alert.alert-secondary role="alert"
+      = "DAY ZERO: #{l(calculate_day_zero(Reading.all), format: :long)}"
+.row
   .col-lg-4
     table.table.mt-4.table-bordered
       thead

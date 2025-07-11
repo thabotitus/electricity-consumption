@@ -15,9 +15,10 @@ module ApplicationHelper
   # @param collection [Array] The collection of readings
   # @param reading [Object] The current reading object
   # @return [Float, String] The difference or '-'
-  def calculate_difference(collection, reading)
-    prev   = collection[collection.index(reading) - 1]
-    result = (prev.current_reading - reading.current_reading).round(2)
+  def calculate_difference(reading)
+    collection = Reading.order(created_at: :asc).all
+    prev       = collection[collection.index(reading) - 1]
+    result     = (prev.current_reading - reading.current_reading).round(2)
 
     return '-' if result.negative?
     result
@@ -46,5 +47,18 @@ module ApplicationHelper
 
     days_to_zero = (latest.current_reading / avg_daily_spend).ceil
     (latest.created_at + days_to_zero.days).to_date
+  end
+
+  # Calculates the time in hours between the given reading and the previous one in the collection.
+  # Assumes IDs are sequential and unique.
+  # Returns '-' if there is no previous reading.
+  #
+  # @param collection [Array] The collection of readings
+  # @param reading [Object] The current reading object
+  # @return [Float, String] The hours difference or '-'
+  def hours_since_last_reading(collection, reading)
+    prev = collection.select { |r| r.id < reading.id }.max_by(&:id)
+    return '-' unless prev
+    ((reading.created_at - prev.created_at) / 1.hour).round
   end
 end

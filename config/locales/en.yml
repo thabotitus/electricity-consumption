@@ -21,6 +21,7 @@ en:
     date: DATE
     reading: READING
     decrease: DECREASED BY
+    time_since_last: TIME SINCE LAST READING
 
   fields:
     amount: AMOUNT

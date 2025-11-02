@@ -1,10 +1,10 @@
-= render( \
-  partial: "shared/page_title", \
-  locals: { \
-    text: t('titles.home.text'), \
-    pagy: @pagy, \
-    icon: "ri-#{t('titles.home.icon')}-line", \
-    subtitle: nil })
+/ = render( \
+/   partial: "shared/page_title", \
+/   locals: { \
+/     text: t('titles.home.text'), \
+/     pagy: @pagy, \
+/     icon: "ri-#{t('titles.home.icon')}-line", \
+/     subtitle: nil })
 
 .row.justify-content-center.mb-4
   .col-sm-12.col-lg-4
@@ -13,6 +13,10 @@
   .col-sm-12.col-lg-4
     .alert.alert-secondary role="alert"
       = "AVG / DAY: #{average_daily_consumption(Reading.all)}"
+  .col-sm-12.col-lg-4
+    - usage_status = usage_level(average_daily_consumption(Reading.all).to_f)
+    .alert[class="alert-#{usage_status[1]}"]
+      = "USAGE: #{usage_status[0].upcase}"
 .row.justify-content-center
   .col-sm-12.col-lg-6
     = render(ChartComponent.new(readings: Reading.all, type: :line, title: 'General Readings'))

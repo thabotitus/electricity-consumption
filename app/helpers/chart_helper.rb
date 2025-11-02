@@ -10,7 +10,7 @@ module ChartHelper
     histogram = Hash.new { |hash, key| hash[key] = [] }
 
     readings.each_cons(2) do |prev, current|
-      month = current.created_at.strftime('%Y-%m')
+      month = current.created_at.strftime('%b')
       consumption = prev.current_reading - current.current_reading
       days = (current.created_at.to_date - prev.created_at.to_date).to_i
       next if days <= 0 || consumption <= 0

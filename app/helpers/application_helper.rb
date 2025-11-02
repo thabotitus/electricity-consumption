@@ -11,6 +11,12 @@
 module ApplicationHelper
   include Pagy::Frontend
 
+  ELECTRICITY_USAGE_LEVELS = {
+    low:     { units_per_day: 0..9,   status: 'success', icon: '' },  # good usage
+    average: { units_per_day: 10..15, status: 'warning', icon: '' },  # typical usage
+    high:    { units_per_day: 16..Float::INFINITY, status: 'danger', icon: '' } # high/inefficient usage
+  }
+
   # Calculates the difference between the current and previous reading in the collection.
   # Returns '-' if the result is negative.
   #
@@ -90,5 +96,11 @@ module ApplicationHelper
     prev = collection.select { |r| r.id < reading.id }.max_by(&:id)
     return '-' unless prev
     ((reading.created_at - prev.created_at) / 1.hour).round
+  end
+
+  def usage_level(units_per_day)
+    ELECTRICITY_USAGE_LEVELS.each do |level, info|
+      return [level, info[:status]] if info[:units_per_day].include?(units_per_day)
+    end
   end
 end

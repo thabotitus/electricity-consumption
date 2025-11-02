@@ -44,10 +44,12 @@ module ApplicationHelper
     return Date.current.end_of_month if days <= 0
 
     spend = first_reading.current_reading - latest.current_reading
-    avg_daily_spend = spend / days.to_f
+    avg_daily_spend = average_daily_consumption(readings)
+
     return Date.current.end_of_month if avg_daily_spend <= 0
 
     days_to_zero = (latest.current_reading / avg_daily_spend).ceil
+
     (latest.created_at + days_to_zero.days).to_date
   end
 

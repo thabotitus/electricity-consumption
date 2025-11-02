@@ -5,15 +5,15 @@
 en:
   titles:
     home:
-      text: Electricity Consumption
+      text: Home
       subtitle:
       icon: flashlight
     top_ups:
-      text: New Top Up
+      text: Topups
       subtitle: Track topups for your meter
       icon: money-pound-circle
     readings:
-      text: New Reading
+      text: Readings
       subtitle: Track meter readings
       icon: speed-up
 
@@ -21,7 +21,9 @@ en:
     date: DATE
     reading: READING
     decrease: DECREASED BY
-    time_since_last: TIME SINCE LAST READING
+    time_since_last: TIME SINCE LAST %{event}
+    amount: AMOUNT
+    units: UNITS
 
   fields:
     amount: AMOUNT

@@ -1,13 +1,16 @@
 class TopUpsController < ApplicationController
   def new
-    @top_up = TopUp.new(date: Time.current)
+    @top_up = TopUp.new
+    topups  = TopUp.order(created_at: :desc).all
+
+    @pagy, @records = pagy(topups)
   end
 
   def create
     @topup = TopUp.new(top_up_params)
 
     if @topup.save
-      redirect_to root_path
+      redirect_to top_ups_path
     end
   end
 

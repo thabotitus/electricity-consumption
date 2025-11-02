@@ -1,6 +1,9 @@
 class ReadingsController < ApplicationController
   def new
     @reading = Reading.new
+    readings = Reading.order(created_at: :desc).all
+
+    @pagy, @records = pagy(readings)
   end
 
   def create

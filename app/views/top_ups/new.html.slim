@@ -7,14 +7,33 @@
     subtitle: t('titles.top_ups.subtitle')})
 
 .row.mt-4
-  .card.w-50.pt-3.pb-3
-    .card-body
-      = form_with(url: top_ups_path, model: @top_up) do |f|
-        .mb-3
-          = f.text_field :amount, placeholder: 'Amount', class: 'form-control rounded-5'
-        .mb-3
-          = f.text_field :units, placeholder: 'Units', class: 'form-control rounded-5'
-        .mb-3
-          = f.date_field :date, placeholder: 'Date', class: 'form-control rounded-5'
+  .col-lg-4
+    .card.pt-3.pb-3
+      .card-body
+        = form_with(url: top_ups_path, model: @top_up) do |f|
+          .mb-3
+            = f.text_field :amount, placeholder: 'Amount', class: 'form-control rounded-5'
+          .mb-3
+            = f.text_field :units, placeholder: 'Units', class: 'form-control rounded-5'
+          .mb-3
+            = f.date_field :date, placeholder: 'Date', class: 'form-control rounded-5'
 
-        = f.submit 'Add', class: 'btn btn-outline-primary rounded-5 px-5 me-4'
+          = f.submit 'Add', class: 'btn btn-outline-primary rounded-5 px-5 me-4'
+
+  .col-lg-8
+    table.table.table-bordered
+      thead
+        tr
+          th scope="col" width="50px" = t('table_headings.date')
+          th.text-end scope="col" width="50px" = t('table_headings.amount')
+          th.text-end scope="col" width="50px" = t('table_headings.units')
+          th.text-end scope="col" width="50px" = t('table_headings.time_since_last', event: 'TOPUP')
+
+      tbody
+        - @records.each do |record|
+          tr
+            th scope="row" = l(record.created_at.localtime, format: :short)
+            th.text-end scope="row" = Money.new(record.amount, 'ZAR').format
+            th.text-end scope="row" = record.units
+            th.text-end scope="row" = "#{hours_since_last_reading(@records, record)}h"
+    == pagy_bootstrap_nav(@pagy)

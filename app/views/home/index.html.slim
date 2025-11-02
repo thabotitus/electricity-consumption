@@ -6,27 +6,15 @@
     icon: "ri-#{t('titles.home.icon')}-line", \
     subtitle: nil })
 
-.row
-  .col-sm-12.col-lg-6
+.row.justify-content-center.mb-4
+  .col-sm-12.col-lg-4
     .alert.alert-secondary role="alert"
       = "DAY ZERO: #{l(calculate_day_zero(Reading.all), format: :long)}"
-.row
-  .col-lg-6
-    table.table.mt-4.table-bordered
-      thead
-        tr
-          th scope="col" width="50px" = t('table_headings.date')
-          th.text-end scope="col" width="50px" = t('table_headings.reading')
-          th.text-end scope="col" width="50px" = t('table_headings.decrease')
-          th.text-end scope="col" width="50px" = t('table_headings.time_since_last')
-
-      tbody
-        - @records.each do |reading|
-          tr
-            th scope="row" = l(reading.created_at.localtime, format: :short)
-            th.text-end scope="row" = reading.current_reading.round(2)
-            th.text-end scope="row" = calculate_difference(reading)
-            th.text-end scope="row" = "#{hours_since_last_reading(@records, reading)}h"
-    == pagy_bootstrap_nav(@pagy)
-  .col-lg-6
-    = render(ChartComponent.new(Reading.all, TopUp.all))
+  .col-sm-12.col-lg-4
+    .alert.alert-secondary role="alert"
+      = "AVG / DAY: #{average_daily_consumption(Reading.all)}"
+.row.justify-content-center
+  .col-sm-12.col-lg-6
+    = render(ChartComponent.new(readings: Reading.all, type: :line, title: 'General Readings'))
+  .col-sm-12.col-lg-6
+    = render(ChartComponent.new(readings: Reading.all, type: :bar, title: 'Daily Consumption By Month'))

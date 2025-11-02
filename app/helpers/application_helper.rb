@@ -5,6 +5,8 @@
 # Methods:
 # - calculate_difference(collection, reading): Calculates the difference between the current and previous reading in a collection. Returns '-' if the result is negative.
 # - calculate_day_zero(readings): Estimates the date when the reading will reach zero based on the rate of consumption. Returns '-' if not enough data or if the rate is non-positive.
+# - average_daily_consumption(readings): Calculates the average daily consumption based on the first and most recent readings. Returns '-' if not enough data or if the average consumption is non-positive.
+# - monthly_consumption_histogram(readings): Creates a histogram of average consumption per month based on the readings. Returns a hash where the keys are months (in 'YYYY-MM' format) and the values are the average consumption for that month.
 
 module ApplicationHelper
   include Pagy::Frontend
@@ -24,29 +26,55 @@ module ApplicationHelper
     result
   end
 
-  # Estimates the date when the reading will reach zero based on the average daily spend for the current month.
-  # Uses the first reading of the month and the most recent reading to calculate the average.
+  # Estimates the date when the reading will reach zero based on the average daily spend
+  # calculated from the first reading of all time and the most recent reading.
   # Returns '-' if not enough data or if the average spend is non-positive.
   #
   # @param readings [Array] The collection of readings (ordered by created_at ascending)
   # @return [Date, String] The estimated zero date or '-'
   def calculate_day_zero(readings)
-    return '-' if readings.empty? || readings.size < 2
+    return 0 if readings.empty? || readings.size < 2
 
     latest = readings.last
-    # Find the first reading of the current month
-    first_of_month = readings.find { |r| r.created_at.month == latest.created_at.month && r.created_at.year == latest.created_at.year }
-    return '-' unless first_of_month && first_of_month != latest
+    # Find the first reading of all time
+    first_reading = readings.first
+    return Date.current.end_of_month unless first_reading && first_reading != latest
 
-    days = (latest.created_at.to_date - first_of_month.created_at.to_date).to_i
-    return '-' if days <= 0
+    days = (latest.created_at.to_date - first_reading.created_at.to_date).to_i
+    return Date.current.end_of_month if days <= 0
 
-    spend = first_of_month.current_reading - latest.current_reading
+    spend = first_reading.current_reading - latest.current_reading
     avg_daily_spend = spend / days.to_f
-    return '-' if avg_daily_spend <= 0
+    return Date.current.end_of_month if avg_daily_spend <= 0
 
     days_to_zero = (latest.current_reading / avg_daily_spend).ceil
     (latest.created_at + days_to_zero.days).to_date
+  end
+
+  # Calculates the average daily consumption based on the first reading of all time and the most recent reading.
+  # Returns '-' if not enough data or if the average consumption is non-positive.
+  #
+  # @param readings [Array] The collection of readings (ordered by created_at ascending)
+  # @return [Float, String] The average daily consumption or '-'
+  def average_daily_consumption(readings)
+    return '-' if readings.empty? || readings.size < 2
+
+    total_days = 0
+    total_consumption = 0.0
+
+    readings.each_cons(2) do |prev, current|
+      days = (current.created_at.to_date - prev.created_at.to_date).to_i
+      consumption = prev.current_reading - current.current_reading
+
+      next if days <= 0 || consumption <= 0
+
+      total_days += days
+      total_consumption += consumption
+    end
+
+    return '-' if total_days <= 0 || total_consumption <= 0
+
+    (total_consumption / total_days).round(2)
   end
 
   # Calculates the time in hours between the given reading and the previous one in the collection.

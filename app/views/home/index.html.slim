@@ -7,16 +7,24 @@
 /     subtitle: nil })
 
 .row.justify-content-center.mb-4
-  .col-sm-12.col-lg-4
+  .col-sm-12.col-lg-4.fs-5
     .alert.alert-secondary role="alert"
       = "DAY ZERO: #{l(calculate_day_zero(Reading.all), format: :long)}"
-  .col-sm-12.col-lg-4
+  .col-sm-12.col-lg-3.fs-5
     .alert.alert-secondary role="alert"
       = "AVG / DAY: #{average_daily_consumption(Reading.all)}"
-  .col-sm-12.col-lg-4
+  .col-sm-12.col-lg-5.fs-5
     - usage_status = usage_level(average_daily_consumption(Reading.all).to_f)
-    .alert[class="alert-#{usage_status[1]}"]
-      = "USAGE: #{usage_status[0].upcase}"
+    - current_usage_status = usage_level(average_daily_consumption_current_month(Reading.all).to_f)
+    .row
+      .col-sm-12.col-lg-6
+        .alert[class="alert-#{usage_status[:status]}"]
+          i.me-2[class="ri-#{usage_status[:icon]}-line"]
+          = "USAGE: #{usage_status[:level].upcase}"
+      .col-sm-12.col-lg-6
+        .alert[class="alert-#{current_usage_status[:status]}"]
+          i.me-2[class="ri-#{current_usage_status[:icon]}-line"]
+          = "CURRENT: #{current_usage_status[:level].upcase}"
 .row.justify-content-center
   .col-sm-12.col-lg-6
     = render(ChartComponent.new(readings: Reading.all, type: :line, title: 'General Readings'))

@@ -24,6 +24,8 @@ class ChartComponent < ViewComponent::Base
 
   def render_line_chart
     line_chart(readings_line_chart_data(readings), id: chart_id, library: {
+      borderJoinStyle: 'round',
+      fill: true,
       elements: {
         point: {
           radius: 0
@@ -41,6 +43,10 @@ class ChartComponent < ViewComponent::Base
   end
 
   def render_bar_chart
-    column_chart(monthly_consumption_histogram(readings), id: chart_id)
+    column_chart(monthly_consumption_histogram(readings), id: chart_id, library: {
+      barThickness: 30,
+      borderRadius: 9,
+      borderWidth: 5
+    })
   end
 end

@@ -12,9 +12,9 @@ module ApplicationHelper
   include Pagy::Frontend
 
   ELECTRICITY_USAGE_LEVELS = {
-    low:     { units_per_day: 0..9,   status: 'success', icon: '' },  # good usage
-    average: { units_per_day: 10..15, status: 'warning', icon: '' },  # typical usage
-    high:    { units_per_day: 16..Float::INFINITY, status: 'danger', icon: '' } # high/inefficient usage
+    low:     { units_per_day: 0..9,   status: 'success', icon: 'star' },  # good usage
+    average: { units_per_day: 10..15, status: 'warning', icon: 'error-warning' },  # typical usage
+    high:    { units_per_day: 16..Float::INFINITY, status: 'danger', icon: 'alarm-warning' } # high/inefficient usage
   }
 
   # Calculates the difference between the current and previous reading in the collection.
@@ -85,6 +85,42 @@ module ApplicationHelper
     (total_consumption / total_days).round(2)
   end
 
+  # Calculates the average daily consumption for the current month based on all readings.
+  # It considers the difference between consecutive readings within the current month to account for top-ups.
+  # Returns '-' if not enough data or if the average consumption is non-positive.
+  #
+  # @param readings [Array] The collection of readings (ordered by created_at ascending)
+  # @return [Float, String] The average daily consumption for the current month or '-'
+  def average_daily_consumption_current_month(readings)
+    return '-' if readings.empty? || readings.size < 2
+
+    current_month = Date.today.month
+    current_year = Date.today.year
+
+    monthly_readings = readings.select do |reading|
+      reading.created_at.month == current_month && reading.created_at.year == current_year
+    end
+
+    return '-' if monthly_readings.size < 2
+
+    total_days = 0
+    total_consumption = 0.0
+
+    monthly_readings.each_cons(2) do |prev, current|
+      days = (current.created_at.to_date - prev.created_at.to_date).to_i
+      consumption = prev.current_reading - current.current_reading
+
+      next if days <= 0 || consumption <= 0
+
+      total_days += days
+      total_consumption += consumption
+    end
+
+    return '-' if total_days <= 0 || total_consumption <= 0
+
+    (total_consumption / total_days).round(2)
+  end
+
   # Calculates the time in hours between the given reading and the previous one in the collection.
   # Assumes IDs are sequential and unique.
   # Returns '-' if there is no previous reading.
@@ -98,9 +134,14 @@ module ApplicationHelper
     ((reading.created_at - prev.created_at) / 1.hour).round
   end
 
+  # Determines the electricity usage level based on the given units per day.
+  # Matches the units per day to predefined levels in ELECTRICITY_USAGE_LEVELS.
+  #
+  # @param units_per_day [Integer, Float] The number of units consumed per day.
+  # @return [Hash] A hash containing the usage level, status, and icon.
   def usage_level(units_per_day)
     ELECTRICITY_USAGE_LEVELS.each do |level, info|
-      return [level, info[:status]] if info[:units_per_day].include?(units_per_day)
+      return {level:, status: info[:status], icon: info[:icon]} if info[:units_per_day].include?(units_per_day)
     end
   end
 end

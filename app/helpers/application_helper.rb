@@ -13,7 +13,7 @@ module ApplicationHelper
 
   ELECTRICITY_USAGE_LEVELS = {
     low:     { units_per_day: 0..9,   status: 'success', icon: 'star' },  # good usage
-    average: { units_per_day: 10..15, status: 'warning', icon: 'error-warning' },  # typical usage
+    okay:    { units_per_day: 10..15, status: 'warning', icon: 'error-warning' },  # typical usage
     high:    { units_per_day: 16..Float::INFINITY, status: 'danger', icon: 'alarm-warning' } # high/inefficient usage
   }
 
